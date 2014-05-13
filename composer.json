@@ -19,7 +19,8 @@
 	"php": ">=5.3.3",
 	"zendframework/zendframework": "2.*",
 	"doctrine/doctrine-module" : "~0.7",
-	"doctrine/doctrine-orm-module" : "~0.7"
+	"doctrine/doctrine-orm-module" : "~0.7",
+	"katsuo-ryuu/kryuu-script-repository" : "*"
     },
     "autoload": {
         "classmap": [
