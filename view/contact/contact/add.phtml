@@ -1,0 +1,23 @@
+<?php
+
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'contact/contact',
+    array(
+        'action'     => 'add'
+    )
+));
+
+$form->add(array(
+    'name'=> 'submit',
+    'type'=> 'Zend\Form\Element\Submit',
+    'attributes'=> array(
+        'value'=> 'Submit',
+        'required'=> 'false',
+        ),
+    )
+);
+
+$form->prepare();
+
+echo $this->ztbForm($form);

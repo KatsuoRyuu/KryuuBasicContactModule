@@ -1,0 +1,29 @@
+{
+    "name": "katsuo-ryuu/kryuu-basic-contact-module",
+    "description": "Contact module for ZF2 using doctrine2",
+    "type": "library",
+    "license": "Ryuu Technology License",
+    "keywords": [
+        "zf2"
+    ],
+    "homepage": "https://github.com/KatsuoRyuu/KRyuu-Basic-Contact-module",
+    "authors": [
+	{
+	    "name": "Anders Blenstrup-Pedersen",
+	    "email": "anders-github@drake-development.org",
+	    "homepage": "http://Ryuu.technology",
+	    "role": "Author"
+	}
+    ],
+    "require": {
+	"php": ">=5.3.3",
+	"zendframework/zendframework": "2.*",
+	"doctrine/doctrine-module" : "~0.7",
+	"doctrine/doctrine-orm-module" : "~0.7"
+    },
+    "autoload": {
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}

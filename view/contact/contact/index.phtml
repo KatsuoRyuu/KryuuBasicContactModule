@@ -1,0 +1,58 @@
+<!--
+The Ryuu Technology License
+
+Copyright 2014 Ryuu Technology by 
+KatsuoRyuu <anders-github@drake-development.org>.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+Ryuu Technology shall be visible and readable to anyone using the software 
+and shall be written in one of the following ways: 竜技術, Ryuu Technology 
+or by using the company logo.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<?php
+$title = 'Posts';
+$this->headTitle($title,$this->placeholder('titleType')->set('PREPEND'));
+//$this->HeadlineNote()->add($title,'Blog posting administration.');
+    
+?>
+<p><a href="<?php echo $this->url('contact/contact', array('action'=>'add'));?>">Add Contact Info</a></p>
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>Workarea</th>
+        <th>Email</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+    </tr>
+    <?php foreach($contacts as $contact) : ?>
+	    <tr>
+	        <td>
+               <?php echo $this->escapeHtml($contact->__get('area'));?>
+            </td>
+	        <td>
+               <?php echo $this->escapeHtml($contact->__get('email'));?>
+            </td>
+	        <td>
+	            <a href="<?php echo $this->url('contact/company', array('action' => 'edit', 'id'=>$contact->__get('id'))); ?>">Edit</a>
+	        </td>
+	        <td>
+	            <a href="<?php echo $this->url('contact/company', array('action' => 'delete', 'id'=>$contact->__get('id'))); ?>" onclick="return confirm('Are you sure?')">Delete</a>
+	        </td>
+	    </tr>
+    <?php endforeach; ?>
+</table>
