@@ -1,7 +1,7 @@
 {
     "name": "katsuo-ryuu/kryuu-basic-contact-module",
     "description": "Contact module for ZF2 using doctrine2",
-    "type": "library",
+    "type": "module",
     "license": "Ryuu Technology License",
     "keywords": [
         "zf2"
