@@ -20,6 +20,7 @@
 	"zendframework/zendframework": "2.*",
 	"doctrine/doctrine-module" : "~0.7",
 	"doctrine/doctrine-orm-module" : "~0.7",
+	"katsuo-ryuu/kryuu-file-repository" : "*",
 	"katsuo-ryuu/kryuu-script-repository" : "*"
     },
     "autoload": {
