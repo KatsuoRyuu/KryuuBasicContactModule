@@ -50,11 +50,13 @@ class CompanyController extends EntityUsingController
             $form->setData($request->getPost());
             if ($form->isValid()) {
                 $em = $this->getEntityManager();
+                
+                
                
                 $em->persist($company);
                 $em->flush();                
 
-                $this->flashMessenger()->addMessage('Contact Saved');
+                $this->flashMessenger()->addMessage('Message Saved');
 
                 return $this->redirect()->toRoute('contact/company');
             }
