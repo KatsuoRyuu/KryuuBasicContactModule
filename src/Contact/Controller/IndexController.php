@@ -5,7 +5,8 @@ use Zend\View\Model\ViewModel;
 use Zend\Form\Annotation\AnnotationBuilder;
 use Contact\Entity\Contact;
 use Contact\Entity\Message;
-use Contact\Entity\CompanyContact;
+use Contact\Entity\Staff;
+use Contact\Entity\Company;
 use Contact\Controller\EntityUsingController;
 use DoctrineORMModule\Stdlib\Hydrator\DoctrineEntity;
 
@@ -36,6 +37,7 @@ class IndexController extends EntityUsingController
     
     public function viewStaffAction()
     {
+        $staffs = new Staff();
         
         $em = $this->getEntityManager();
         
@@ -45,8 +47,12 @@ class IndexController extends EntityUsingController
             $staffs = $em->getRepository('Contact\Entity\Staff')->findBy(array(), array('name' => 'ASC'));
         }
 
+        
+        
         $company = $em->getRepository('Contact\Entity\Company')->findOneBy(array(), array('name' => 'ASC'));
-       
+        if(!$company){
+            $company = new Company();
+        }
 
         $builder    = new AnnotationBuilder();
         $message    = new Message();
