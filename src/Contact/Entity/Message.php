@@ -51,9 +51,9 @@ use Zend\Form\Annotation;
  * @ORM\Table(name="contact_message")
  */
 class Message {
-    
-        
-    
+
+
+
     /**
      * @Annotation\Exclude()
      * 
@@ -63,75 +63,130 @@ class Message {
      * @var integer 
      */
     private $id;
-        
+
     /**
      * @Annotation\Type("Zend\Form\Element\Select")
      * @Annotation\Flags({"priority": 600})
      * @Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StringTrim"})
-     * @Annotation\Validator({"name":"StringLength"})
+     * @ Annotation\Validator({"name":"StringLength"})
      * @Annotation\Options({"label":"About:"})
-     * @Annotation\Attributes({"options":{"1":"Visa","2":"Maestro"}})
+     * @Annotation\Attributes({"options":{"1":"PlaceHolder","2":"Test"}})
      * 
      * @ORM\Column(type="string")
      * @var String
      */
     private $about;
-        
+
     /**
      * @Annotation\Type("Zend\Form\Element\Text")
      * @Annotation\Flags({"priority": 500})
      * @Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
      * @ Annotation\Validator({"name":"EmailAddress"})
-     * @Annotation\Options({"label":"Name:","priority":"400"})
+     * @Annotation\Options({"label":"Name:"})
      * @Annotation\Attributes({"required": true,"placeholder": "Your name ... "})
      * 
      * @ORM\Column(type="string")
      * @var String
      */
     private $name;
-        
+
     /**
      * @Annotation\Type("Zend\Form\Element\Text")
      * @Annotation\Flags({"priority": 500})
      * @Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
      * @ Annotation\Validator({"name":"EmailAddress"})
-     * @Annotation\Options({"label":"Subject:","priority":"400"})
+     * @Annotation\Options({"label":"Subject:"})
      * @Annotation\Attributes({"required": true,"placeholder": "Subject ... "})
      * 
      * @ORM\Column(type="string")
      * @var String
      */
     private $subject;
-        
+
     /**
      * @Annotation\Type("Zend\Form\Element\File")
      * @Annotation\Flags({"priority": 500})
-     * @Annotation\Required({"required":"false" })
-     * @Annotation\Filter({"name":"StringTrim"})
-     * @Annotation\Validator({"name":"StringLength"})
+     * @ Annotation\Required({"required":false })
+     * @ Annotation\Filter({"name":"StringTrim","filerenameupload":{"target": "./img","randomize":true}})
+     * @ Annotation\Filter({"name":"StripTags"})
+     * @ Annotation\Validator({"name":"StringLength"})
      * @Annotation\Options({"label":"File:"})
-     * @Annotation\Attributes({"options":{"1":"Visa","2":"Maestro"}})
+     * @ Annotation\Attributes({"required": false})
      * 
      * @ORM\Column(type="string")
      * @var String
      */
     private $file;
-        
+
     /**
      * @Annotation\Type("Zend\Form\Element\Textarea")
      * @Annotation\Flags({"priority": 500})
-     * @Annotation\Required({"required":"true" })
+     * @ Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
      * @ Annotation\Validator({"name":"EmailAddress"})
-     * @Annotation\Options({"label":"Message:","priority":"500"})
+     * @Annotation\Options({"label":"Message:"})
      * @Annotation\Attributes({"required": true,"placeholder": "Message ... "})
      * 
      * @ORM\Column(type="string")
      * @var String
      */
     private $message;
-    
+
+    /**
+     * WARNING USING THESE IS NOT SAFE. there is no checking on the data and you need to know what
+     * you are doing when using these.
+     * But it a great function for lazy people ;)
+     * 
+     * @param ANY $value
+     * @param ANY $key
+     * @return $value
+     */
+    public function __set($value,$key){
+        return $this->$key = $value;
+    }    
+
+    /**
+     * WARNING USING THESE IS NOT SAFE. there is no checking on the data and you need to know what
+     * you are doing when using these.
+     * But it a great function for lazy people ;)
+     * 
+     * @param ANY $value
+     * @param ANY $key
+     * @return $value
+     */
+    public function __get($key){
+        return $this->$key;
+    }    
+
+    /**
+     * WARNING USING THESE IS NOT SAFE. there is no checking on the data and you need to know what
+     * you are doing when using these.
+     * This is used to exchange data from form and more when need to store data in the database.
+     * and again ist made lazy, by using foreach without data checks
+     * 
+     * @param ANY $value
+     * @param ANY $key
+     * @return $value
+     */
+    public function populate($array){
+        foreach ($array as $key => $var){
+            $this->$key = $var;
+        }
+    }
+
+
+    /**
+    * Get an array copy of object
+    *
+    * @return array
+    */
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
+
+
 }
