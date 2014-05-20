@@ -84,14 +84,14 @@ namespace Contact\Controller;
                 if ($form->isValid()) {
                     $em = $this->getEntityManager();
 
-                    $this->storeFile($request->getFiles());
+                    $message->__set($this->storeFile($request->getFiles()), 'file');
                         
                     $em->persist($message);
                     $em->flush();                
 
                     $this->flashMessenger()->addMessage('Contact Saved');
 
-                    //return $this->redirect()->toRoute('contact');
+                    return $this->redirect()->toRoute('contact');
                 }
             }
 
@@ -107,7 +107,7 @@ namespace Contact\Controller;
             }
 
             $fileRepo = $this->getServiceLocator()->get('FileRepository');
-            $fileId = $fileRepo->save($file['upload']['tmp_name']);
-            
+            $file = $fileRepo->save($file['upload']['tmp_name']);
+            return $file->getId();
         }
     }
