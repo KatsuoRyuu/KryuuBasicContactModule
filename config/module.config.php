@@ -8,19 +8,16 @@ return array(
             'Contact\Controller\Index' => 'Contact\Controller\IndexController',
             'Contact\Controller\Company' => 'Contact\Controller\CompanyController',
             'Contact\Controller\Staff' => 'Contact\Controller\StaffController',
+            'Contact\Controller\Message' => 'Contact\Controller\MessageController',
         ),
     ),
     // The following section is new and should be added to your file
     'router' => array(
         'routes' => array(
             'contact' => array(
-                'type' => 'segment',
+                'type' => 'Literal',
                 'options' => array(
-                    'route'    => '/contact[/][:action][/:id][/:id2]',
-                    'constraints' => array(
-                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id'     => '[0-9]+',
-                    ),
+                    'route'    => '/contact',
                     'defaults' => array(
                         'controller' => 'Contact\Controller\Index',
                         'action' => 'index',
@@ -28,6 +25,20 @@ return array(
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
+                    'contactview' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/view[/][:action][/:id][/:id2]',
+                            'constraints' => array(
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'id'     => '[0-9]+',
+                            ),
+                            'defaults' => array(
+                                'controller' => 'Contact\Controller\Index',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ),
                     'company' => array(
                         'type' => 'segment',
                         'options' => array(
@@ -66,6 +77,19 @@ return array(
                             ),
                             'defaults' => array(
                                 'controller' => 'Contact\Controller\Staff',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ),
+                    'message' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/message[/][:action]',
+                            'constraints' => array(
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                                'controller' => 'Contact\Controller\Message',
                                 'action' => 'index',
                             ),
                         ),

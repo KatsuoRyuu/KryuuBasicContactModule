@@ -109,7 +109,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 <?php
 $companyForm = $this->companyForm;
-$companyForm->setAttribute('action', $this->url('contact'));
+$companyForm->setAttribute('action', $this->url('contact/message', array('action'=>'add')));
 
 $companyForm->add(array(
     'name'=> 'submit',

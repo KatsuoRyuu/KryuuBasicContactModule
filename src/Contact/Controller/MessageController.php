@@ -39,44 +39,75 @@ namespace Contact\Controller;
  * @version 20140514 
  * @link https://github.com/KatsuoRyuu/
  */
-use Zend\View\Model\ViewModel;
-use Zend\Form\Annotation\AnnotationBuilder;
-use Contact\Entity\Contact;
-use Contact\Entity\Company;
-use Contact\Entity\Message;
-use Contact\Controller\EntityUsingController;
+    use Zend\View\Model\ViewModel;
+    use Zend\Form\Annotation\AnnotationBuilder;
+    use Contact\Entity\Contact;
+    use Contact\Entity\Company;
+    use Contact\Entity\Message;
+    use Contact\Controller\EntityUsingController;
 
-class MessageController extends EntityUsingController {
+    class MessageController extends EntityUsingController {
 
-    
-    public function addMessage(){
-        
-        $message = new Message();
-        
-        $formBuilder = new AnnotationBuilder();
-        $form = $formBuilder->createForm($message);
-        $form->bind($message);
-        
-        $request = $this->getRequest();
-        
-        if ($request->isPost()){
+
+        public function addAction(){
+
+            $message =  new Message();
+
+            $builder = new AnnotationBuilder();
+            $form   =  $builder->createForm($message);
+            $form->bind($message);
             
-            $form->setData($request->getPost());
-            if ($form->isValid()) {
+            $request = $this->getRequest();
+
+            if ($request->isPost()) {
+
+                $form->bind($message);
                 
-                $em = $this->getEntityManager();
-               
-                $em->persist($message);
-                $em->flush();                
+                if ($request->getFiles()['file']['tmp_name'] != "" && $this->getConfiguration('fileupload')){
+                    $form->add(array( 
+                        'name' => 'upload', 
+                        'type' => 'file', 
+                        'attributes' => array( 
+                            'required' => 'required', 
+                        ), 
+                        'options' => array( 
+                            'label' => 'File Upload', 
+                        ), 
+                    ));
+                    $requestData = array_merge_recursive((array) $request->getPost(),(array) $request->getFiles());
+                } else {
+                    $requestData = (array) $request->getPost();
+                }
+                
+                $form->setData($requestData);
+                
+                if ($form->isValid()) {
+                    $em = $this->getEntityManager();
 
-                $this->flashMessenger()->addMessage('Contact Saved');
+                    $this->storeFile($request->getFiles());
+                        
+                    $em->persist($message);
+                    $em->flush();                
 
-                return $this->redirect()->toRoute('contact');
+                    $this->flashMessenger()->addMessage('Contact Saved');
+
+                    //return $this->redirect()->toRoute('contact');
+                }
             }
+
+            return new ViewModel(array(
+                'form' => $form
+            ));
         }
 
-        return new ViewModel(array(
-            'form' => $form
-        ));
+        private function storeFile($file){
+
+            if (!$this->getConfiguration('fileupload')){
+                return null;
+            }
+
+            $fileRepo = $this->getServiceLocator()->get('FileRepository');
+            $fileId = $fileRepo->save($file['upload']['tmp_name']);
+            
+        }
     }
-}

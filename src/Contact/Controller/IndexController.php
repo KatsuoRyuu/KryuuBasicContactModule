@@ -10,8 +10,7 @@ use Contact\Entity\Company;
 use Contact\Controller\EntityUsingController;
 use DoctrineORMModule\Stdlib\Hydrator\DoctrineEntity;
 
-class IndexController extends EntityUsingController
-{
+class IndexController extends EntityUsingController {
 	
 	protected $ContactTable;
 	
@@ -25,17 +24,30 @@ class IndexController extends EntityUsingController
         $builder    = new AnnotationBuilder();
         $message    = new Message();
         $companyForm= $builder->createForm($message);
+        
+        
+        if ($this->getConfiguration('fileupload')){
+            $companyForm->add(array( 
+                'name' => 'upload', 
+                'priority' => 300,
+                'type' => 'file',
+                'options' => array( 
+                    'label' => 'File:', 
+                ), 
+            ),array('priority' => 300));
+        }
+        
         $contactsArray = $company->getContacts()->toArray();
         $mails = array();
         foreach($contactsArray as $contact){
             $mails[$contact->__get('id')] = $contact->__get('area');
         }
         
-        $companyForm->get('about')->setValueOptions($mails);
+        //$companyForm->get('about')->setValueOptions($mails);
         return new ViewModel(array('company'=>$company,'staffs'=>$staffs,'companyForm'=>$companyForm));
     }
     
-    public function viewStaffAction()
+    public function staffAction()
     {
         $staffs = new Staff();
         
@@ -67,7 +79,7 @@ class IndexController extends EntityUsingController
         return new ViewModel(array('company'=>$company,'staffs'=>$staffs,'companyForm'=>$companyForm));
     }
     
-    public function viewCompanyAction()
+    public function companyAction()
     {
         return $this->indexAction();
     }

@@ -94,7 +94,7 @@ class Message {
 
     /**
      * @Annotation\Type("Zend\Form\Element\Text")
-     * @Annotation\Flags({"priority": 500})
+     * @Annotation\Flags({"priority": 400})
      * @Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
      * @ Annotation\Validator({"name":"EmailAddress"})
@@ -107,23 +107,24 @@ class Message {
     private $subject;
 
     /**
-     * @Annotation\Type("Zend\Form\Element\File")
-     * @Annotation\Flags({"priority": 500})
+     * @Annotation\Exclude()
+     * @ Annotation\Type("Zend\Form\Element\File")
+     * @ Annotation\Flags({"priority": 300})
      * @ Annotation\Required({"required":false })
      * @ Annotation\Filter({"name":"StringTrim","filerenameupload":{"target": "./img","randomize":true}})
      * @ Annotation\Filter({"name":"StripTags"})
      * @ Annotation\Validator({"name":"StringLength"})
-     * @Annotation\Options({"label":"File:"})
+     * @ Annotation\Options({"label":"File:"})
      * @ Annotation\Attributes({"required": false})
      * 
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      * @var String
      */
     private $file;
 
     /**
      * @Annotation\Type("Zend\Form\Element\Textarea")
-     * @Annotation\Flags({"priority": 500})
+     * @Annotation\Flags({"priority": 200})
      * @ Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
      * @ Annotation\Validator({"name":"EmailAddress"})
