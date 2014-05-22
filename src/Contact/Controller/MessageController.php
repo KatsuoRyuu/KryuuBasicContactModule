@@ -140,17 +140,6 @@ class MessageController extends EntityUsingController {
             ->setEncoding("UTF-8");
         // Setup SMTP transport using LOGIN authentication
         
-        $transport = new SmtpTransport();
-        $options   = new SmtpOptions(array(
-            'name'              => 'drake-development.org',
-            'host'              => 'drake-development.org',
-            'connection_class'  => 'login',
-            'connection_config' => array(
-                'username' => 'spawn@drake-development.org',
-                'password' => 'd!e8uPs3En!yuk',
-            ),
-        ));
-        $transport->setOptions($options);
-        $transport->send($mail);
+        $this->getMailTransport()->send($mail);
     }
 }
