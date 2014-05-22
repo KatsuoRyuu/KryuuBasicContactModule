@@ -40,7 +40,8 @@ namespace Contact\Entity;
  * @link https://github.com/KatsuoRyuu/
  */
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping as ORM,
+    Doctrine\Common\Collections\ArrayCollection;
 use Zend\Form\Annotation;
 
 
@@ -51,8 +52,6 @@ use Zend\Form\Annotation;
  * @ORM\Table(name="contact_message")
  */
 class Message {
-
-
 
     /**
      * @Annotation\Exclude()
@@ -73,8 +72,11 @@ class Message {
      * @Annotation\Options({"label":"About:"})
      * @Annotation\Attributes({"options":{"1":"PlaceHolder","2":"Test"}})
      * 
-     * @ORM\Column(type="string")
-     * @var String
+     * @ORM\ManyToMany(targetEntity="Contact\Entity\Contact")
+     * @ORM\JoinTable(name="contact_message_contact_linker",
+     *      joinColumns={@ORM\JoinColumn(name="message_id", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="contact_id", referencedColumnName="id", nullable=false)}
+     *      )
      */
     private $about;
 
@@ -91,6 +93,20 @@ class Message {
      * @var String
      */
     private $name;
+
+    /**
+     * @Annotation\Type("Zend\Form\Element\Text")
+     * @Annotation\Flags({"priority": 500})
+     * @Annotation\Required({"required":"true" })
+     * @Annotation\Filter({"name":"StripTags"})
+     * @Annotation\Validator({"name":"EmailAddress"})
+     * @Annotation\Options({"label":"email:"})
+     * @Annotation\Attributes({"required": true,"placeholder": "Your email..."})
+     * 
+     * @ORM\Column(type="string")
+     * @var String
+     */
+    private $email;
 
     /**
      * @Annotation\Type("Zend\Form\Element\Text")
@@ -117,7 +133,12 @@ class Message {
      * @ Annotation\Options({"label":"File:"})
      * @ Annotation\Attributes({"required": false})
      * 
-     * @ORM\Column(type="string", nullable=true)
+     *
+     * @ORM\ManyToMany(targetEntity="FileRepository\Entity\File")
+     * @ORM\JoinTable(name="contact_message_file_linker",
+     *      joinColumns={@ORM\JoinColumn(name="message_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id")}
+     *      )
      * @var String
      */
     private $file;
@@ -135,6 +156,22 @@ class Message {
      * @var String
      */
     private $message;
+    
+    /**
+     * 
+     * 
+     */
+    public function __construct() {
+        $this->about = new ArrayCollection();
+        $this->file = new ArrayCollection();
+    }
+    
+    public function __add($value,$key){
+        if(!$this->$key instanceof ArrayCollection) {
+            $this->$key = new ArrayCollection();
+        }
+        $this->$key->add($value);
+    }
 
     /**
      * WARNING USING THESE IS NOT SAFE. there is no checking on the data and you need to know what
@@ -173,9 +210,14 @@ class Message {
      * @return $value
      */
     public function populate($array){
-        foreach ($array as $key => $var){
-            $this->$key = $var;
-        }
+        
+        $this->__add($array['about'],'about');
+        $this->__add($array['file'],'file' );
+        
+        $this->email    = $array['email'];
+        $this->message  = $array['message'];
+        $this->name     = $array['name'];
+        $this->subject  = $array['subject'];
     }
 
 
