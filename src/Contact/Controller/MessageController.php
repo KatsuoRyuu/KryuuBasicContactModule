@@ -39,75 +39,118 @@ namespace Contact\Controller;
  * @version 20140514 
  * @link https://github.com/KatsuoRyuu/
  */
-    use Zend\View\Model\ViewModel;
-    use Zend\Form\Annotation\AnnotationBuilder;
-    use Contact\Entity\Contact;
-    use Contact\Entity\Company;
-    use Contact\Entity\Message;
-    use Contact\Controller\EntityUsingController;
+use Zend\View\Model\ViewModel;
+use Zend\Form\Annotation\AnnotationBuilder;
+use Contact\Entity\Contact;
+use Contact\Entity\Company;
+use Contact\Entity\Message;
+use Contact\Controller\EntityUsingController;
+use Zend\Mail;
+use Zend\Mail\Transport\Smtp as SmtpTransport;
+use Zend\Mail\Transport\SmtpOptions;
 
-    class MessageController extends EntityUsingController {
+class MessageController extends EntityUsingController {
 
 
-        public function addAction(){
+    public function addAction(){
 
-            $message =  new Message();
+        $message =  new Message();
+        $isFile = false;
+        
+        
+        $builder = new AnnotationBuilder();
+        $form   =  $builder->createForm($message);
+        $form->bind($message);
 
-            $builder = new AnnotationBuilder();
-            $form   =  $builder->createForm($message);
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+
             $form->bind($message);
-            
-            $request = $this->getRequest();
 
-            if ($request->isPost()) {
-
-                $form->bind($message);
-                
-                if ($request->getFiles()['file']['tmp_name'] != "" && $this->getConfiguration('fileupload')){
-                    $form->add(array( 
-                        'name' => 'upload', 
-                        'type' => 'file', 
-                        'attributes' => array( 
-                            'required' => 'required', 
-                        ), 
-                        'options' => array( 
-                            'label' => 'File Upload', 
-                        ), 
-                    ));
-                    $requestData = array_merge_recursive((array) $request->getPost(),(array) $request->getFiles());
-                } else {
-                    $requestData = (array) $request->getPost();
-                }
-                
-                $form->setData($requestData);
-                
-                if ($form->isValid()) {
-                    $em = $this->getEntityManager();
-
-                    $message->__set($this->storeFile($request->getFiles()), 'file');
-                        
-                    $em->persist($message);
-                    $em->flush();                
-
-                    $this->flashMessenger()->addMessage('Contact Saved');
-
-                    return $this->redirect()->toRoute('contact');
-                }
+            if ($request->getFiles()['file']['tmp_name'] != "" && $this->getConfiguration('fileupload')){
+                $form->add(array( 
+                    'name' => 'upload', 
+                    'type' => 'file', 
+                    'attributes' => array( 
+                        'required' => 'required', 
+                    ), 
+                    'options' => array( 
+                        'label' => 'File Upload', 
+                    ), 
+                ));
+                $requestData = array_merge_recursive((array) $request->getPost(),(array) $request->getFiles());
+                $isFile  = true;
+            } else {
+                $requestData = (array) $request->getPost();
             }
 
-            return new ViewModel(array(
-                'form' => $form
-            ));
-        }
+            $form->setData($requestData);
 
-        private function storeFile($file){
+            if ($form->isValid()) {
+                $em = $this->getEntityManager();
+                
+                $contact = $this->getEntityManager()->getRepository('Contact\Entity\Contact')->findOneBy(array('id'=>$request->getPost()->about));
+                
+                $message->__add($contact,'about');
+                
+                if ($isFile) {
+                    $message->__add($this->storeFile($request->getFiles()), 'file');
+                }
+                
+                $em->persist($message);
+                $em->flush();  
+                
+                
+                $this->sendMail($message);
 
-            if (!$this->getConfiguration('fileupload')){
-                return null;
+                $this->flashMessenger()->addMessage('Contact Saved');
+
+                return $this->redirect()->toRoute('contact');
             }
-
-            $fileRepo = $this->getServiceLocator()->get('FileRepository');
-            $file = $fileRepo->save($file['upload']['tmp_name']);
-            return $file->getId();
         }
+
+        return new ViewModel(array(
+            'form' => $form
+        ));
     }
+
+
+    private function storeFile($file){
+
+        if (!$this->getConfiguration('fileupload')){
+            return null;
+        }
+
+        $fileRepo = $this->getServiceLocator()->get('FileRepository');
+        $file = $fileRepo->save($file['upload']['tmp_name']);
+        return $file;
+    }
+    
+    private function sendMail($message){
+        $mail = new Mail\Message();
+        
+        $mail
+            ->addFrom($message->__get('email'), $message->__get('name'))
+            ->addTo($message->__get('about')->first()->__get('email'))
+            ->setSubject($message->__get('subject'))
+            ->setBody($message->__get('message'))
+            ->addReplyTo($message->__get('email'), $message->__get('name'))
+            ->setSender($message->__get('email'), $message->__get('name'))
+            ->setEncoding("UTF-8");
+        // Setup SMTP transport using LOGIN authentication
+        
+        $transport = new SmtpTransport();
+        $options   = new SmtpOptions(array(
+            'name'              => 'drake-development.org',
+            'host'              => 'drake-development.org',
+            'connection_class'  => 'login',
+            'connection_config' => array(
+                'username' => 'spawn@drake-development.org',
+                'password' => 'd!e8uPs3En!yuk',
+            ),
+        ));
+        $transport->setOptions($options);
+        $transport->send($mail);
+    }
+}

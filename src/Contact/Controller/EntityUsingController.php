@@ -2,6 +2,8 @@
 namespace Contact\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mail\Transport\Smtp as SmtpTransport;
+use Zend\Mail\Transport\SmtpOptions;
 
 class EntityUsingController extends AbstractActionController
 {
@@ -18,6 +20,11 @@ class EntityUsingController extends AbstractActionController
 
 	/**
 	* @var configuration
+	*/
+	protected $configuration;
+
+	/**
+	* @var MailTransport
 	*/
 	protected $configuration;
 	
@@ -112,6 +119,56 @@ class EntityUsingController extends AbstractActionController
      * @return String or array.
 	 */
 	protected function getConfiguration($searchString)	{
+        
+		if (null === $this->configuration) {
+			$this->setConfiguration();
+		}
+		return $this->configuration[$searchString];
+	}
+    
+    
+    
+	/**
+	* Sets the configuration for later easier access
+	*
+	* @access protected
+	* @return PostController
+	*/
+	protected function setMailTransport() {
+
+        $transport = new SmtpTransport();
+        $options   = new SmtpOptions(array(
+            'name'              => 'drake-development.org',
+            'host'              => 'drake-development.org',
+            'connection_class'  => 'login',
+            'connection_config' => array(
+                'username' => 'spawn@drake-development.org',
+                'password' => 'd!e8uPs3En!yuk',
+            ),
+        ));
+        $transport->setOptions($options);
+        $transport->send($mail);
+	}
+	
+	/**
+	 * Returns the configuration
+	 *
+	 * Fetches the string of the base configuration name ex
+     * array(
+     *      test => someconfig,
+     *      foo  => array(
+     *           foobar => barfoo,
+     *           ),
+     *      );
+     * 
+     * getConfiguration(test) returns string(someconfig)
+     * getConfiguration(foo)  returns array(foobar => barfoo)
+	 *
+     * @param String $searchString the name of the base configuration
+	 * @access protected
+     * @return String or array.
+	 */
+	protected function getMailTransport()	{
         
 		if (null === $this->configuration) {
 			$this->setConfiguration();

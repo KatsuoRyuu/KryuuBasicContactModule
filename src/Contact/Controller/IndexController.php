@@ -43,7 +43,7 @@ class IndexController extends EntityUsingController {
             $mails[$contact->__get('id')] = $contact->__get('area');
         }
         
-        //$companyForm->get('about')->setValueOptions($mails);
+        $companyForm->get('about')->setValueOptions($mails);
         return new ViewModel(array('company'=>$company,'staffs'=>$staffs,'companyForm'=>$companyForm));
     }
     
