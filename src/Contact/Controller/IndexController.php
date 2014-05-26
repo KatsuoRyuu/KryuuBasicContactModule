@@ -28,7 +28,7 @@ class IndexController extends EntityUsingController {
         
         if ($this->getConfiguration('fileupload')){
             $companyForm->add(array( 
-                'name' => 'upload', 
+                'name' => 'file', 
                 'priority' => 300,
                 'type' => 'file',
                 'options' => array( 

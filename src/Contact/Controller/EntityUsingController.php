@@ -181,12 +181,12 @@ class EntityUsingController extends AbstractActionController
 
         $this->transport = new SmtpTransport();
         $options   = new SmtpOptions(array(
-            'name'              => $this->getConfiguration('mailTransport')['name'],
-            'host'              => $this->getConfiguration('mailTransport')['host'],
-            'connection_class'  => $this->getConfiguration('mailTransport')['connection_class'],
+            'name'              => $this->getConfiguration('mailTransport',true)['name'],
+            'host'              => $this->getConfiguration('mailTransport',true)['host'],
+            'connection_class'  => $this->getConfiguration('mailTransport',true)['connection_class'],
             'connection_config' => array(
-                'username' => $this->getConfiguration('mailTransport')['connection_config']['username'],
-                'password' => $this->getConfiguration('mailTransport')['connection_config']['password'],
+                'username' => $this->getConfiguration('mailTransport',true)['connection_config']['username'],
+                'password' => $this->getConfiguration('mailTransport',true)['connection_config']['password'],
             ),
         ));
         $this->transport->setOptions($options);
@@ -214,7 +214,7 @@ class EntityUsingController extends AbstractActionController
 	protected function getMailTransport()	{
         
 		if (null === $this->transport) {
-			$this->setConfiguration();
+			$this->setMailTransport();
 		}
 		return $this->transport;
 	}

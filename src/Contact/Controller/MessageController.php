@@ -46,6 +46,7 @@ use Contact\Entity\Company;
 use Contact\Entity\Message;
 use Contact\Controller\EntityUsingController;
 use Zend\Mail;
+use Zend\Mime;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 
@@ -67,7 +68,7 @@ class MessageController extends EntityUsingController {
         if ($request->isPost()) {
 
             $form->bind($message);
-
+            
             if ($request->getFiles()['file']['tmp_name'] != "" && $this->getConfiguration('fileupload')){
                 $form->add(array( 
                     'name' => 'upload', 
@@ -115,7 +116,6 @@ class MessageController extends EntityUsingController {
         ));
     }
 
-
     private function storeFile($file){
 
         if (!$this->getConfiguration('fileupload')){
@@ -123,23 +123,55 @@ class MessageController extends EntityUsingController {
         }
 
         $fileRepo = $this->getServiceLocator()->get('FileRepository');
-        $file = $fileRepo->save($file['upload']['tmp_name']);
+        $file = $fileRepo->save($file['file']['tmp_name'],$file['file']['name']);
         return $file;
     }
     
     private function sendMail($message){
+        
         $mail = new Mail\Message();
+        
+        $parts = array();
+        
+        $bodyMessage = new Mime\Part();
+        $bodyMessage->type = 'text/plain';
+        
+        $parts[] = $bodyMessage;
+        
+        if ($message->__get("file")->count() > 0){
+            foreach ($message->__get("file") as $file) {
+                $fileRepo = $this->getServiceLocator()->get('FileRepository');
+                $fileContent = fopen($fileRepo->getRoot().'/'.$file->getSavePath(), 'r');
+                
+                $attachment = new Mime\Part($fileContent);
+                $attachment->type = $file->getMimetype();
+                $attachment->filename = $file->getName();
+                $attachment->encoding = Mime\Mime::ENCODING_BASE64;
+                $attachment->disposition = Mime\Mime::DISPOSITION_ATTACHMENT;
+                $parts[] = $attachment;
+            }
+
+        }
+
+        $bodyPart = new Mime\Message();
+
+        // add the message body and attachment(s) to the MimeMessage
+        $bodyPart->setParts($parts);
         
         $mail
             ->addFrom($message->__get('email'), $message->__get('name'))
             ->addTo($message->__get('about')->first()->__get('email'))
             ->setSubject($message->__get('subject'))
-            ->setBody($message->__get('message'))
+            ->setBody($bodyPart)
             ->addReplyTo($message->__get('email'), $message->__get('name'))
             ->setSender($message->__get('email'), $message->__get('name'))
-            ->setEncoding("UTF-8");
+            ->setEncoding("UTF-8")
+            ->setBody($bodyPart);
         // Setup SMTP transport using LOGIN authentication
         
         $this->getMailTransport()->send($mail);
+        
     }
+
+
 }
