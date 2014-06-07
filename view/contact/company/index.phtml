@@ -31,46 +31,61 @@ $this->headTitle($title,$this->placeholder('titleType')->set('PREPEND'));
 //$this->HeadlineNote()->add($title,'Blog posting administration.');
     
 ?>
-<p><a href="<?php echo $this->url('contact/company', array('action'=>'add'));?>">Add Company</a></p>
-<table class="table table-bordered table-hover">
-    <tr>
-        <th>Post</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-    </tr>
-    <?php foreach($companies as $company) : ?>
-	    <tr>
-	        <td>
-               <?php echo $this->escapeHtml($company->__get('name'));?>:
-            </td>
-	        <td>
-	            <a href="<?php echo $this->url('contact/company', array('action' => 'edit', 'id'=>$company->__get('id'))); ?>">Edit</a>
-	        </td>
-	        <td>
-	            <a href="<?php echo $this->url('contact/company', array('action' => 'delete', 'id'=>$company->__get('id'))); ?>" onclick="return confirm('Are you sure?')">Delete</a>
-	        </td>
-	        <td>
-	            <a href="<?php echo $this->url('contact/company', array('action' => 'addContact', 'id'=>$company->__get('id'))); ?>" >Add contact info</a>
-	        </td>
-	    </tr>
-        <?php foreach($company->getContacts() as $contact) : ?>
+
+<section class="work-wrap clearfix section parallax-background" id="Biletter"  style="background-image:url('/thaifights/img/bgDust.png');background-color: #FFF;">
+    <header class="item-header-wrap">
+        <div class="item-header screen-large">
+            <div class="logo_content">
+                <h2 class="logo">Company Admin</h2>
+            </div>
+
+            <div class="title-shadow"></div>
+        </div>
+    </header>
+
+    <article class="work-content screen-large-portfolio">
+        <p><a href="<?php echo $this->url('contact/company', array('action'=>'add'));?>">Add Company</a></p>
+        <table class="table table-bordered table-hover">
             <tr>
-                <td>
-                    <dd><?php echo $this->escapeHtml($contact->__get('area'));?></dd>
-                </td>
-                <!--
-                <td>
-                    <a href="<?php echo $this->url('contact/company', array('action' => 'edit', 'id'=>$company->__get('id'))); ?>">Edit</a>
-                </td>
-                -->
-                <td>
-                    <a href="<?php echo $this->url('contact/company', array('action' => 'deleteContact', 'id'=>$company->__get('id'), 'id2'=>$contact->__get('id'))); ?>" onclick="return confirm('Are you sure?')">Delete</a>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
+                <th>Post</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
             </tr>
-        <?php endforeach; ?>
-    <?php endforeach; ?>
-</table>
+            <?php foreach($companies as $company) : ?>
+                <tr>
+                    <td>
+                       <?php echo $this->escapeHtml($company->__get('name'));?>:
+                    </td>
+                    <td>
+                        <a href="<?php echo $this->url('contact/company', array('action' => 'edit', 'id'=>$company->__get('id'))); ?>">Edit</a>
+                    </td>
+                    <td>
+                        <a href="<?php echo $this->url('contact/company', array('action' => 'delete', 'id'=>$company->__get('id'))); ?>" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                    <td>
+                        <a href="<?php echo $this->url('contact/company', array('action' => 'addContact', 'id'=>$company->__get('id'))); ?>" >Add contact info</a>
+                    </td>
+                </tr>
+                <?php foreach($company->getContacts() as $contact) : ?>
+                    <tr>
+                        <td>
+                            <dd><?php echo $this->escapeHtml($contact->__get('area'));?></dd>
+                        </td>
+                        <!--
+                        <td>
+                            <a href="<?php echo $this->url('contact/company', array('action' => 'edit', 'id'=>$company->__get('id'))); ?>">Edit</a>
+                        </td>
+                        -->
+                        <td>
+                            <a href="<?php echo $this->url('contact/company', array('action' => 'deleteContact', 'id'=>$company->__get('id'), 'id2'=>$contact->__get('id'))); ?>" onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </table>
+    </article>
+</section>

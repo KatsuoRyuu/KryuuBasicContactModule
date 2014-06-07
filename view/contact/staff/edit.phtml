@@ -47,6 +47,20 @@ $form->add(array(
 
 $form->prepare();
 
+?>
 
- 
-echo $this->ztbForm($form);
+<section class="work-wrap clearfix section parallax-background" id="Biletter"  style="background-image:url('/thaifights/img/bgDust.png');background-color: #FFF;">
+    <header class="item-header-wrap">
+        <div class="item-header screen-large">
+            <div class="logo_content">
+                <h2 class="logo">Add Contact</h2>
+            </div>
+
+            <div class="title-shadow"></div>
+        </div>
+    </header>
+
+    <article class="work-content screen-large-portfolio">
+        <?= $this->ztbForm($form); ?>
+    </article>
+</section>

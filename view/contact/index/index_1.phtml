@@ -82,30 +82,11 @@ function initialize() {
     function(results, status) {
         if(status == google.maps.GeocoderStatus.OK) {    
             var mapOptions = { 
-                mapTypeId: google.maps.MapTypeId.TERRAIN,
-                zoom: 14,
-                center: results[0].geometry.location,
-                mapTypeControlOptions: { 
-                    style: google.maps.MapTypeControlStyle.DEFAULT,
-                    position: google.maps.ControlPosition.TOP_RIGHT
-                }, 
-                zoomControl: true,
-                zoomControlOptions: {
-                    style: google.maps.ZoomControlStyle.DEFAULT,
-                    position: google.maps.ControlPosition.TOP_LEFT
-                },
-                panControl: true,
-                panControlOptions: {
-                    position: google.maps.ControlPosition.TOP_LEFT
-                },
-                scaleControl: true,
-                streetViewControl: true,
-                streetViewControlOptions: {
-                    position: google.maps.ControlPosition.TOP_LEFT
-                },
-                scrollwheel: false
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            zoom: 14,
+            center: results[0].geometry.location
             }
-            var map = new google.maps.Map(document.getElementById("contact-map"), mapOptions);
+            var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
             new google.maps.Marker({
                 position:results[0].geometry.location,
                 map: map
@@ -117,6 +98,14 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 <?php $this->headScript()->captureEnd() ?>
 <?php if (0) : ?></script><?php endif; ?>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#home" data-toggle="tab"><?= $company->__get('name') ?></a></li>
+  <?php foreach ($staffs as $staff): ?>
+  <li><a href="#<?= $staff->__get('id') ?>" data-toggle="tab"><?= $staff->__get('name') ?></a></li>
+  <?php endforeach; ?>
+</ul>
 
 <?php
 $companyForm = $this->companyForm;
@@ -135,36 +124,46 @@ $companyForm->add(array(
 
 ?>
 
+<!-- Tab panes -->
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="home">
+        <div style="float:left;">
+            <h2><?= $this->translate('Contact Info') ?></h2>
+            
+            <?= $company->__get('name') ?><br />
+            <?= $company->__get('address') ?><br />
+            <?= $company->__get('zip') ?> <?= $company->__get('city') ?><br />
+            <?= $company->__get('country') ?><br /><br />
+            <?= $this->translate('Phone').': '.$company->__get('phone') ?><br /><br />
+            
+            <?php
+                $companyForm->prepare();
+                echo $this->ztbForm($companyForm);
+            ?>
+        </div>
+        <div style="float:right;">
+        <div id="map_canvas"></div>
 
-<section class="clearfix" id="Contacts">
-        <header class="item-header-wrap">
-            <div class="item-header screen-large">
-                <div class="logo_content" >
-                    <h2 class="logo">Kontakt</h2>
-                </div>
-
-                <div class="title-shadow"></div>
-            </div>
-        </header>
-        
-
-        <div id="contact-map" style="z-index: -100; margin-top:-30px; height:800px;"></div>
-        <div class="page-content screen-large" style="margin-top:-700px;">
-        
-            <div style="background-color:rgba(255,255,255,0.8); width: 220px; padding:10px; border-radius: 5px;">      
-                <?= $company->__get('name') ?><br />
-                <?= $company->__get('address') ?><br />
-                <?= $company->__get('zip') ?> <?= $company->__get('city') ?><br />
-                <?= $company->__get('country') ?><br /><br />
-                <?= $this->translate('Phone').': '.$company->__get('phone') ?><br /><br />
-
-                <?php
-                    $companyForm->prepare();
-                    echo $this->ztbForm($companyForm);
-                ?>
-            </div>
         </div>
 
-    </section>
-<!-- Tab panes -->
-
+    </div>
+    <?php foreach ($staffs as $staff): ?>
+        <div class="tab-pane fade" id="<?= $staff->__get('id') ?>">            
+            <h2><?= $staff->__get('name') ?> <?= $staff->__get('lastname') ?></h2>
+            <?= $staff->__get('country') ?><br /><br />
+            <?= $this->translate('Phone').': '.$staff->__get('phone') ?><br /><br />
+            
+            <?php
+                
+                $contactsArray = $staff->getContacts()->toArray();
+                $mails = array();
+                foreach($contactsArray as $contact){
+                    $mails[$contact->__get('id')] = $contact->__get('area');
+                }
+                $companyForm->get('about')->setValueOptions($mails);
+                $companyForm->prepare();
+                echo $this->ztbForm($companyForm);
+            ?>
+        </div>
+    <?php endforeach; ?>
+</div>
