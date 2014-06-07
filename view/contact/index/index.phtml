@@ -41,9 +41,6 @@
 
 <?php
 
-$this->ScriptRepo($this->serverUrl(true))->needScript('angular-js','1.3.0','JS')
-                ->needScript('bootstrap','3.1.1','JS')
-                ->needScript('bootstrap-theme','3.1.1','CSS');
 $this->headScript()->appendFile('https://maps.googleapis.com/maps/api/js?sensor=false');
 
 ?>
@@ -67,10 +64,7 @@ div.contact{
 <?php if(0): ?><script><?php endif; ?>
 <?php $this->headScript()->captureStart() ?>
     
-$('#myTab a').click(function (e) {
-  e.preventDefault()
-  $(this).tab('show')
-})
+
 function initialize() {
 
     var geocoder = new google.maps.Geocoder();
