@@ -124,7 +124,8 @@ class EntityUsingController extends AbstractActionController
 		if (null === $this->baseNamespace) {
 			$this->setBaseNamespace(__NAMESPACE__);
 		}
-		return $this->baseNamespace;
+        
+        return $this->baseNamespace;
 	}
     
 	/**
@@ -134,7 +135,8 @@ class EntityUsingController extends AbstractActionController
 	* @return PostController
 	*/
 	protected function setConfiguration() {
-        $this->configuration = $this->getServiceLocator()->get('config')[$this->getBaseNamespace()]['config'];
+        $tmpConfig = $this->getServiceLocator()->get('config');
+        $this->configuration = $tmpConfig[$this->getBaseNamespace()]['config'];
 		return $this;
 	}
 	
@@ -163,7 +165,8 @@ class EntityUsingController extends AbstractActionController
 		}
         
         if($global){
-            return $this->getServiceLocator()->get('config')[$searchString];
+            $tmp = $this->getServiceLocator()->get('config');
+            return $tmp[$searchString];
         }
         
 		return $this->configuration[$searchString];
@@ -179,14 +182,16 @@ class EntityUsingController extends AbstractActionController
 	*/
 	protected function setMailTransport() {
 
+        $config = $this->getConfiguration('mailTransport');
+        
         $this->transport = new SmtpTransport();
         $options   = new SmtpOptions(array(
-            'name'              => $this->getConfiguration('mailTransport',true)['name'],
-            'host'              => $this->getConfiguration('mailTransport',true)['host'],
-            'connection_class'  => $this->getConfiguration('mailTransport',true)['connection_class'],
+            'name'              => ['name'],
+            'host'              => $config['host'],
+            'connection_class'  => $config['connection_class'],
             'connection_config' => array(
-                'username' => $this->getConfiguration('mailTransport',true)['connection_config']['username'],
-                'password' => $this->getConfiguration('mailTransport',true)['connection_config']['password'],
+                'username' => $config['connection_config']['username'],
+                'password' => $config['connection_config']['password'],
             ),
         ));
         $this->transport->setOptions($options);
@@ -214,7 +219,7 @@ class EntityUsingController extends AbstractActionController
 	protected function getMailTransport()	{
         
 		if (null === $this->transport) {
-			$this->setMailTransport();
+			$this->setConfiguration();
 		}
 		return $this->transport;
 	}
