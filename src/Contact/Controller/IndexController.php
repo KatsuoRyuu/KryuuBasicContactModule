@@ -21,6 +21,14 @@ class IndexController extends EntityUsingController {
         $company = $em->getRepository('Contact\Entity\Company')->findOneBy(array(), array('name' => 'ASC'));
         $staffs = $em->getRepository('Contact\Entity\Staff')->findBy(array(), array('name' => 'ASC'));
 
+        if (!$company){
+            $company = new Company();
+        }
+        if (!$staffs){
+            $staffs = new Staff();
+        }
+        
+        
         $builder    = new AnnotationBuilder();
         $message    = new Message();
         $companyForm= $builder->createForm($message);
@@ -37,13 +45,14 @@ class IndexController extends EntityUsingController {
             ),array('priority' => 300));
         }
         
+
         $contactsArray = $company->getContacts()->toArray();
         $mails = array();
         foreach($contactsArray as $contact){
             $mails[$contact->__get('id')] = $contact->__get('area');
         }
-        
         $companyForm->get('about')->setValueOptions($mails);
+
         return new ViewModel(array('company'=>$company,'staffs'=>$staffs,'companyForm'=>$companyForm));
     }
     
