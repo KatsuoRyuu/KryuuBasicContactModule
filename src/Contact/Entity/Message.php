@@ -49,7 +49,7 @@ use Zend\Form\Annotation;
  * @Annotation\Name("message")
  * @Annotation\Hydrator("Zend\Stdlib\Hydrator\ObjectProperty")
  * @ORM\Entity
- * @ORM\Table(name="contact_message")
+ * @ORM\Table(name="kryuu_contact_message")
  */
 class Message {
 

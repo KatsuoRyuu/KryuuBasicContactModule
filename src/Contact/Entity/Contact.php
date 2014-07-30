@@ -28,7 +28,7 @@ use    Zend\Form\Annotation;
  * @Annotation\Name("contact")
  * @Annotation\Hydrator("Zend\Stdlib\Hydrator\ObjectProperty")
  * @ORM\Entity
- * @ORM\Table(name="contact_contact")
+ * @ORM\Table(name="kryuu_contact_contact")
  */
 class Contact{
     

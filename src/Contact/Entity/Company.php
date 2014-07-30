@@ -55,7 +55,7 @@ use Doctrine\ORM\Mapping as ORM,
  * @Annotation\Name("company")
  * @ Annotation\Hydrator("Zend\Stdlib\Hydrator\ObjectProperty")
  * @ORM\Entity
- * @ORM\Table(name="contact_company")
+ * @ORM\Table(name="kryuu_contact_company")
  */
 class Company {
     
